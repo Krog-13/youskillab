@@ -80,9 +80,7 @@ class HealthCard(models.Model):
         verbose_name="Calprotectin (µg/g)",
         help_text="Marker of inflammation in stool (e.g., 50.0 µg/g)"
     )
-
-
-    # Дата записи данных
+    # Data recording date
     date_recorded = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Date Recorded",
