@@ -11,10 +11,42 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import logging.config
+import environ
+
+
+env = environ.Env(
+    DEBUG=(bool),
+    LOCAL=(bool),
+    SECRET_KEY=(str),
+    DATABASE_NAME=(str),
+    DATABASE_USER=(str),
+    DATABASE_PASSWORD=(str),
+    DATABASE_HOST=(str),
+    DATABASE_PORT=(str),
+
+    MINIO_ACCESS_KEY=(str),
+    MINIO_SECRET_KEY=(str),
+    MINIO_SERVER=(str),
+    MINIO_BUCKET=(str),
+
+    EMAIL_HOST=(str),
+    EMAIL_PORT=(int),
+    EMAIL_HOST_USER=(str),
+    EMAIL_HOST_PASSWORD=(str),
+    EMAIL_USE_SSL=(bool),
+    EMAIL_USE_TLS=(bool),
+
+    CORS_ALLOWED_ORIGINS=(list),
+    CSRF_TRUSTED_ORIGINS=(list),
+
+    ALLOWED_HOSTS=(list)
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -25,7 +57,7 @@ SECRET_KEY = 'django-insecure-0%*w5$8#x&z5f!&_(3rvl^$#_^9&q+&rz-d+4m=ijbt7vi$7aj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -76,8 +108,12 @@ WSGI_APPLICATION = 'yslab.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT')
     }
 }
 
@@ -122,3 +158,40 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING_CONFIG = None
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_logger': False,
+
+    'formatters': {
+        'default_formatter': {
+            'format': '[%(levelname)s:%(asctime)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'stream_handler': {
+            'level': "INFO",
+            'class': 'logging.StreamHandler',
+            'formatter': 'default_formatter',
+            'stream': 'ext://sys.stdout'
+        },
+        'file_handler': {
+            'level': "WARNING",
+            'filename': 'YSL.log',
+            'class': 'logging.FileHandler',
+            'formatter': 'default_formatter',
+            'mode': 'a'
+        }
+    },
+    'loggers': {
+        'pf_logger': {
+            'handlers': ['stream_handler', 'file_handler'],
+            'level': 'DEBUG',
+            'propagate': False
+        }
+    }
+}
+
+logging.config.dictConfig(LOGGING)
