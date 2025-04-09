@@ -40,7 +40,10 @@ env = environ.Env(
     CORS_ALLOWED_ORIGINS=(list),
     CSRF_TRUSTED_ORIGINS=(list),
 
-    ALLOWED_HOSTS=(list)
+    ALLOWED_HOSTS=(list),
+
+    CLIENT_ID=(list),
+    SECRET=(list),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,7 +55,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0%*w5$8#x&z5f!&_(3rvl^$#_^9&q+&rz-d+4m=ijbt7vi$7aj'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -97,8 +100,8 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         'APP': {
-            'client_id': '',
-            'secret': '',
+            'client_id': env('CLIENT_ID'),
+            'secret': env('SECRET'),
             'key': ''
         },
         "SCOPE": [
