@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+    {% if user.is_authenticated %}
+        <p>Привет, {{ user.email }}!</p>
+        <a href="{% url 'account_logout' %}">Выйти</a>
+    {% else %}
+        <a href="{% url 'social:begin' 'google-oauth2' %}">Войти через Google</a>
+    {% endif %}
+</body>
+</html>
